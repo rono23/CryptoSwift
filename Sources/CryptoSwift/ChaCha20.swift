@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Marcin Krzyzanowski. All rights reserved.
 //
 
-final class ChaCha20: BlockCipher {
+public final class ChaCha20: BlockCipher {
 
     enum Error: Swift.Error {
         case invalidKeyOrInitializationVector
@@ -66,7 +66,7 @@ final class ChaCha20: BlockCipher {
         }
     }
 
-    init(key: Array<UInt8>, iv: Array<UInt8>) throws {
+    public init(key: Array<UInt8>, iv: Array<UInt8>) throws {
         self.context = try Context(key: key, iv: iv)
     }
 
@@ -115,7 +115,7 @@ final class ChaCha20: BlockCipher {
 // MARK: Cipher
 extension ChaCha20: Cipher {
 
-    func encrypt<C: Collection>(_ bytes: C) throws -> Array<UInt8> where C.Iterator.Element == UInt8, C.IndexDistance == Int, C.Index == Int {
+    public func encrypt<C: Collection>(_ bytes: C) throws -> Array<UInt8> where C.Iterator.Element == UInt8, C.IndexDistance == Int, C.Index == Int {
         var ctx = context
         var c = Array<UInt8>(repeating: 0, count: bytes.count)
 
@@ -146,7 +146,7 @@ extension ChaCha20: Cipher {
         }
     }
 
-    func decrypt<C: Collection>(_ bytes: C) throws -> Array<UInt8> where C.Iterator.Element == UInt8, C.IndexDistance == Int, C.Index == Int {
+    public func decrypt<C: Collection>(_ bytes: C) throws -> Array<UInt8> where C.Iterator.Element == UInt8, C.IndexDistance == Int, C.Index == Int {
         return try encrypt(bytes)
     }
 }
@@ -154,7 +154,7 @@ extension ChaCha20: Cipher {
 // MARK: Encryptor
 extension ChaCha20 {
 
-    struct Encryptor: Updatable {
+    public struct Encryptor: Updatable {
         private var accumulated = Array<UInt8>()
         private let chacha: ChaCha20
 
@@ -162,7 +162,7 @@ extension ChaCha20 {
             self.chacha = chacha
         }
 
-        mutating func update<T: Collection>(withBytes bytes: T, isLast: Bool = false) throws -> Array<UInt8> where T.Iterator.Element == UInt8 {
+        public mutating func update<T: Collection>(withBytes bytes: T, isLast: Bool = false) throws -> Array<UInt8> where T.Iterator.Element == UInt8 {
             self.accumulated += bytes
 
             var encrypted = Array<UInt8>()
@@ -181,7 +181,7 @@ extension ChaCha20 {
 // MARK: Decryptor
 extension ChaCha20 {
 
-    struct Decryptor: Updatable {
+    public struct Decryptor: Updatable {
         private var accumulated = Array<UInt8>()
 
         private var offset: Int = 0
@@ -192,7 +192,7 @@ extension ChaCha20 {
             self.chacha = chacha
         }
 
-        mutating func update<T: Collection>(withBytes bytes: T, isLast: Bool = true) throws -> Array<UInt8> where T.Iterator.Element == UInt8 {
+        public mutating func update<T: Collection>(withBytes bytes: T, isLast: Bool = true) throws -> Array<UInt8> where T.Iterator.Element == UInt8 {
             // prepend "offset" number of bytes at the begining
             if self.offset > 0 {
                 self.accumulated += Array<UInt8>(repeating: 0, count: offset) + bytes
@@ -226,11 +226,11 @@ extension ChaCha20 {
 // MARK: Cryptors
 extension ChaCha20: Cryptors {
 
-    func makeEncryptor() -> ChaCha20.Encryptor {
+    public func makeEncryptor() -> ChaCha20.Encryptor {
         return Encryptor(chacha: self)
     }
 
-    func makeDecryptor() -> ChaCha20.Decryptor {
+    public func makeDecryptor() -> ChaCha20.Decryptor {
         return Decryptor(chacha: self)
     }
 }

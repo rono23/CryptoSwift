@@ -7,7 +7,7 @@
 //
 import XCTest
 import Foundation
-@testable import CryptoSwift
+import CryptoSwift
 
 final class ChaCha20Tests: XCTestCase {
 
