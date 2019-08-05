@@ -76,14 +76,14 @@ public final class ChaCha20: BlockCipher {
         var x = input
 
         for _ in 0 ..< 10 {
-            quarterround(&x[0], &x[4], &x[8], &x[12])
-            quarterround(&x[1], &x[5], &x[9], &x[13])
-            quarterround(&x[2], &x[6], &x[10], &x[14])
-            quarterround(&x[3], &x[7], &x[11], &x[15])
-            quarterround(&x[0], &x[5], &x[10], &x[15])
-            quarterround(&x[1], &x[6], &x[11], &x[12])
-            quarterround(&x[2], &x[7], &x[8], &x[13])
-            quarterround(&x[3], &x[4], &x[9], &x[14])
+            quarterround(&x, 0, 4, 8, 12)
+            quarterround(&x, 1, 5, 9, 13)
+            quarterround(&x, 2, 6, 10, 14)
+            quarterround(&x, 3, 7, 11, 15)
+            quarterround(&x, 0, 5, 10, 15)
+            quarterround(&x, 1, 6, 11, 12)
+            quarterround(&x, 2, 7, 8, 13)
+            quarterround(&x, 3, 4, 9, 14)
         }
 
         var output = Array<UInt8>()
@@ -97,18 +97,18 @@ public final class ChaCha20: BlockCipher {
         return output
     }
 
-    private final func quarterround(_ a: inout UInt32, _ b: inout UInt32, _ c: inout UInt32, _ d: inout UInt32) {
-        a = a &+ b
-        d = rotateLeft((d ^ a), by: 16) // FIXME: WAT? n:
+    private final func quarterround(_ x: inout Array<UInt32>, _ a: Int, _ b: Int, _ c: Int, _ d: Int) {
+        x[a] = x[a] &+ x[b]
+        x[d] = rotateLeft((x[d] ^ x[a]), by: 16) // FIXME: WAT? n:
 
-        c = c &+ d
-        b = rotateLeft((b ^ c), by: 12)
+        x[c] = x[c] &+ x[d]
+        x[b] = rotateLeft((x[b] ^ x[c]), by: 12)
 
-        a = a &+ b
-        d = rotateLeft((d ^ a), by: 8)
+        x[a] = x[a] &+ x[b]
+        x[d] = rotateLeft((x[d] ^ x[a]), by: 8)
 
-        c = c &+ d
-        b = rotateLeft((b ^ c), by: 7)
+        x[c] = x[c] &+ x[d]
+        x[b] = rotateLeft((x[b] ^ x[c]), by: 7)
     }
 }
 
@@ -247,4 +247,3 @@ private func wordNumber<T: Collection>(_ bytes: T) -> UInt32 where T.Iterator.El
 
     return value
 }
-

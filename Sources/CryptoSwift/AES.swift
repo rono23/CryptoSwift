@@ -243,7 +243,7 @@ fileprivate extension AES {
         var b = block.toUInt32Array()
 
         let t = UnsafeMutablePointer<UInt32>.allocate(capacity: 4)
-        t.initialize(to: 0, count: 4)
+        t.initialize(repeating: 0, count: 4)
         defer {
             t.deinitialize(count: 4)
             t.deallocate(capacity: 4)
